@@ -6,5 +6,5 @@ VERSION = "v0.0.1"
 FrameworkVersionDic = {"v4.0.30319":  r'C:\Windows\Microsoft.NET\Framework\v4.0.30319'}
 
 
-def getDefautlMsBuild(debug=False):
+def get_default_msbuild(debug=False):
     return MsBuild(FrameworkVersionDic["v4.0.30319"]+r'\MSBuild.exe',debug)
