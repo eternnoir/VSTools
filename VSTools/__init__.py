@@ -22,7 +22,6 @@ def deploy_copy(sourcepath, targetpath):
     command = ['xcopy', sourcepath, targetpath, '/D', '/K', '/E', '/Y', '/C', '/I', '/H']
     p = Popen(command, stdout=PIPE, stderr=PIPE)
     output, err = p.communicate()
-    print(output)
     if p.returncode == 1:
         return False
     return True
@@ -31,7 +30,6 @@ def stop_iis():
     command = ['iisreset', '/stop']
     p = Popen(command, stdout=PIPE, stderr=PIPE)
     output, err = p.communicate()
-    print(output)
     if p.returncode == 1:
         return False
     return True
@@ -41,7 +39,6 @@ def start_iis():
     command = ['iisreset', '/start']
     p = Popen(command, stdout=PIPE, stderr=PIPE)
     output, err = p.communicate()
-    print(output)
     if p.returncode == 1:
         return False
     return True
