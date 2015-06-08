@@ -4,8 +4,6 @@ __author__ = 'eternnoir'
 
 import os
 from subprocess import Popen, PIPE
-import subprocess
-
 
 class MsBuild:
     def __init__(self, msBuildPath, debug=False):
