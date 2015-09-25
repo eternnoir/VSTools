@@ -5,7 +5,7 @@ import os
 from subprocess import Popen, PIPE
 
 
-class MsBuild:
+class MsBuild(object):
     def __init__(self, msBuildPath, debug=False):
         self.executePath = msBuildPath
         self.debug = debug
@@ -23,6 +23,7 @@ class MsBuild:
         if p.returncode == 1:
             return False
         return True
+
     def build_release(self, sln_path):
         return self.build_release_target(sln_path)
 
