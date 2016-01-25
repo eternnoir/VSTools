@@ -15,19 +15,26 @@ class FortifySCA(object):
         self.bin_path = bin_path
         self.debug = debug
 
-    def scan(self, build_id, path, output_frp, pdf_filename=None, need_clean=True):
+    def scan(self, build_id, path, output_frp, pdf_filename=None, need_clean=True, load_dlls=True):
         self.__check_sca_bin__()
         if need_clean:
+            self.__print__("Start Clean.")
             r, output = self.clean(build_id, path)
             if not r:
                 self.__print__(output)
                 raise Exception("Clean Fail.")
 
-        r, output = self.translating(build_id, path)
+        dll_args = []
+        if load_dlls:
+            dll_args = self.__build_dll_args__(path)
+
+        self.__print__("Start Translating.")
+        r, output = self.translating(build_id, path, args=dll_args)
         self.__print__(output)
         if not r:
             raise Exception("Transtating Fail.")
 
+        self.__print__("Start Scan.")
         command = [self.bin_path, self.__build_max_memory_command__(), self.__build_min_memory_command__(),
                    '-vsversion', self.vs_version, '-b', build_id, '-scan',
                    '-f', output_frp]
@@ -37,9 +44,11 @@ class FortifySCA(object):
             return False, output
         return True, output
 
-    def translating(self, build_id, path):
+    def translating(self, build_id, path, args=[]):
         command = [self.bin_path, self.__build_max_memory_command__(), self.__build_min_memory_command__(),
                    '-vsversion', self.vs_version, '-b', build_id, os.path.abspath(path)]
+        for arg in args:
+            command.append(arg)
         p = Popen(command, stdout=PIPE, stderr=PIPE, cwd=path)
         output, err = p.communicate()
         if p.returncode != 0:
@@ -73,6 +82,29 @@ class FortifySCA(object):
     def __build_min_memory_command__(self):
         return "-Xms" + str(self.min_mem) + "M"
 
+    def __build_dll_args__(self, folder_path):
+        ret = ["-libdirs"]
+        dll_list = get_all_dll_path(folder_path)
+        if len(dll_list) == 0:
+            return []
+
+        dll_path_string = ""
+        for dll_path in dll_list:
+            dll_path_string += dll_path + ";"
+
+        ret.append(dll_path_string)
+        return ret
+
     def __print__(self, message):
         if self.debug:
             print(message)
+
+
+def get_all_dll_path(folder_path):
+    ret = []
+    import os
+    for root, dirs, files in os.walk(folder_path):
+        for file in files:
+            if file.endswith(".dll"):
+                ret.append(os.path.join(root, file))
+    return ret
