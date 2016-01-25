@@ -1,2 +1,2 @@
 # VSTools
-Easy use Visual Studio msbuild with python.
+Easy use Visual Studio msbuild, nuget, fortify with python.
