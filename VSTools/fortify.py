@@ -40,17 +40,22 @@ class FortifySCA(object):
                    '-f', output_frp]
         p = Popen(command, stdout=PIPE, stderr=PIPE, cwd=path)
         output, err = p.communicate()
+        self.__print__(output)
+        self.__print__(err)
         if p.returncode != 0:
             return False, output
         return True, output
 
     def translating(self, build_id, path, args=[]):
         command = [self.bin_path, self.__build_max_memory_command__(), self.__build_min_memory_command__(),
-                   '-vsversion', self.vs_version, '-b', build_id, os.path.abspath(path)]
+                   '-vsversion', self.vs_version, '-b', build_id]
         for arg in args:
             command.append(arg)
+        command.append(os.path.abspath(path))
         p = Popen(command, stdout=PIPE, stderr=PIPE, cwd=path)
         output, err = p.communicate()
+        self.__print__(output)
+        self.__print__(err)
         if p.returncode != 0:
             return False, output
         return True, output
@@ -60,6 +65,8 @@ class FortifySCA(object):
                    '-vsversion', self.vs_version, '-b', build_id, '-clean']
         p = Popen(command, stdout=PIPE, stderr=PIPE, cwd=path)
         output, err = p.communicate()
+        self.__print__(output)
+        self.__print__(err)
         if p.returncode != 0:
             return False, output
         return True, output
@@ -106,5 +113,5 @@ def get_all_dll_path(folder_path):
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             if file.endswith(".dll"):
-                ret.append(os.path.join(root, file))
+                ret.append(os.path.abspath(os.path.join(root, file)))
     return ret
