@@ -38,7 +38,7 @@ class FortifySCA(object):
         command = [self.bin_path, self.__build_max_memory_command__(), self.__build_min_memory_command__(),
                    '-vsversion', self.vs_version, '-b', build_id, '-scan',
                    '-f', output_frp]
-        p = Popen(command, stdout=PIPE, stderr=PIPE, cwd=path)
+        p = Popen(command, stdout=PIPE, stderr=PIPE)
         output, err = p.communicate()
         self.__print__(output)
         self.__print__(err)
