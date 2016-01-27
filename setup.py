@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(name='VSTools',
-      version='0.1',
+      version='0.1.1',
       description='Easy use Visual Studio msbuild with python. ',
       author='eternnoir',
       author_email='eternnoir@gmail.com',
