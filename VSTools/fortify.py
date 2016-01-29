@@ -7,8 +7,22 @@ from subprocess import Popen, PIPE
 SOURCEANALYZERBIN = 'sourceanalyzer'
 
 
+def __build_dll_args__(folder_path):
+    ret = ["-libdirs"]
+    dll_list = get_all_dll_path(folder_path)
+    if len(dll_list) == 0:
+        return []
+
+    dll_path_string = ""
+    for dll_path in dll_list:
+        dll_path_string += dll_path + ";"
+
+    ret.append(dll_path_string)
+    return ret
+
+
 class FortifySCA(object):
-    def __init__(self, bin_path=SOURCEANALYZERBIN, min_mem=400, max_mem=2048, vs_version='10.0', debug=False):
+    def __init__(self, bin_path=SOURCEANALYZERBIN, min_mem=400, max_mem=2048, vs_version='11.0', debug=False):
         self.vs_version = vs_version
         self.max_mem = max_mem
         self.min_mem = min_mem
@@ -26,7 +40,7 @@ class FortifySCA(object):
 
         dll_args = []
         if load_dlls:
-            dll_args = self.__build_dll_args__(path)
+            dll_args = __build_dll_args__(path)
 
         self.__print__("Start Translating.")
         r, output = self.translating(build_id, path, args=dll_args)
@@ -88,19 +102,6 @@ class FortifySCA(object):
 
     def __build_min_memory_command__(self):
         return "-Xms" + str(self.min_mem) + "M"
-
-    def __build_dll_args__(self, folder_path):
-        ret = ["-libdirs"]
-        dll_list = get_all_dll_path(folder_path)
-        if len(dll_list) == 0:
-            return []
-
-        dll_path_string = ""
-        for dll_path in dll_list:
-            dll_path_string += dll_path + ";"
-
-        ret.append(dll_path_string)
-        return ret
 
     def __print__(self, message):
         if self.debug:
