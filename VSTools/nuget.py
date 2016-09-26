@@ -20,6 +20,7 @@ class Nuget(object):
         output, err = p.communicate()
         if self.debug:
             print(output)
+            print(err)
         if p.returncode == 1:
             return False
         return True
